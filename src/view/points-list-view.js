@@ -5,7 +5,7 @@ function createListView() {
   </ul>`;
 }
 
-export class ListView {
+export class PointsListView {
   getTemplate() {
     return createListView();
   }
