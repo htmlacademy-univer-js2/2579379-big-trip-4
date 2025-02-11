@@ -20,6 +20,6 @@ export class PointsListPresenter {
     for (let i = 0; i < 3; i++) {
       render(new PointView(), this.pointsListComponent.getElement());
     }
-    render(new CreationFormView(), this.pointsContainer);
+    render(new CreationFormView(), this.pointsListComponent.getElement());
   }
 }
