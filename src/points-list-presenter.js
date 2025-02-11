@@ -11,10 +11,6 @@ export class PointsListPresenter {
   pointsContainer = document.querySelector('.trip-events');
   filterContainer = document.querySelector('.trip-controls__filters');
 
-  constructor({listContainer}) {
-    this.listContainer = listContainer;
-  }
-
   init() {
     render(new FilterView(), this.filterContainer);
     render(new SortView(), this.pointsContainer);
