@@ -1,16 +1,16 @@
 import dayjs from 'dayjs';
-import { HOURS_PER_DAY, MINUTES_PER_HOUR } from '../consts/consts.js';
+import duration from 'dayjs/plugin/duration';
 
-function getDestination(id, destinations) {
+function getDestinationBydI(id, destinations) {
   return destinations.find((dest) => dest.id === id);
 }
 
-function getOfferOptions(type, offers) {
-  return offers.find((o) => o.type === type)?.options;
+function getOfferOptionsByType(type, offers) {
+  return offers.find((offer) => offer.type === type)?.options;
 }
 
-function getOption(id, options) {
-  return options.find((o) => o.id === id);
+function getOptionById(id, options) {
+  return options.find((offer) => offer.id === id);
 }
 
 function convertDate(date, newFormat) {
@@ -18,31 +18,27 @@ function convertDate(date, newFormat) {
 }
 
 function getDuration(dateFrom, dateTo) {
+  dayjs.extend(duration);
+
   const from = dayjs(dateFrom);
   const to = dayjs(dateTo);
 
-  const duration = [];
+  const totalDuration = dayjs.duration(to.diff(from));
+  const finalDurtion = [];
 
-  const totalMinutes = to.diff(from, 'minute');
-  const minutesRemaining = totalMinutes % (HOURS_PER_DAY * MINUTES_PER_HOUR);
-
-  const days = Math.floor(totalMinutes / (HOURS_PER_DAY * MINUTES_PER_HOUR));
-  const hours = Math.floor(minutesRemaining / MINUTES_PER_HOUR);
-  const finalMinutes = minutesRemaining % MINUTES_PER_HOUR;
-
-  if (days > 0) {
-    return duration.push(`${days}D`);
+  if (totalDuration.$d.days > 0) {
+    finalDurtion.push(`${totalDuration.$d.days}D`);
   }
 
-  if (hours > 0) {
-    duration.push(`${hours}H`);
+  if (totalDuration.$d.hours > 0) {
+    finalDurtion.push(`${totalDuration.$d.hours}H`);
   }
 
-  if (finalMinutes > 0) {
-    duration.push(`${finalMinutes}M`);
+  if (totalDuration.$d.minutes > 0) {
+    finalDurtion.push(`${totalDuration.$d.minutes}M`);
   }
 
-  return duration.join(' ');
+  return finalDurtion.join(' ');
 }
 
-export { getDestination, getOfferOptions, getOption, convertDate, getDuration };
+export { getDestinationBydI, getOfferOptionsByType, getOptionById, convertDate, getDuration };

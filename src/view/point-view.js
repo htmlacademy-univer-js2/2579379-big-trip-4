@@ -1,16 +1,16 @@
 import { createElement } from '../render';
 import {
-  getDestination,
-  getOfferOptions,
-  getOption,
+  getDestinationBydI,
+  getOfferOptionsByType,
+  getOptionById,
   convertDate,
   getDuration
 } from '../utils/utils.js';
 import { Formats } from '../consts/consts.js';
 
-function createOfferTemplate(id, type, options) {
-  const pointOptions = getOfferOptions(type, options) || null;
-  const {title, price} = getOption(id, pointOptions) || null;
+function createOfferTemplate(optionId, offeTtype, options) {
+  const pointOptions = getOfferOptionsByType(offeTtype, options);
+  const {title, price} = getOptionById(optionId, pointOptions);
 
   return `<li class="event__offer">
             <span class="event__offer-title">${title}</span>
@@ -20,12 +20,12 @@ function createOfferTemplate(id, type, options) {
 }
 
 function createPointTemplate(point, destinations, offers) {
-  const {type, dateStart, dateEnd, price, destination: pointDestination, offers: pointOptions, isFavorite} = point;
+  const {type, dateStart, dateEnd, price, destinationId: pointDestination, pointOptions: pointOptions, isFavorite} = point;
 
   const day = convertDate(dateStart, Formats.DAY);
-  const dayValue = convertDate(dateStart, Formats.VALUE);
+  const dayValue = convertDate(dateStart, Formats.TIME_TAG_VALUE);
 
-  const destination = getDestination(pointDestination, destinations);
+  const destination = getDestinationBydI(pointDestination, destinations);
 
   const timeStart = convertDate(dateStart, Formats.DURATION);
   const timeEnd = convertDate(dateEnd, Formats.DURATION);

@@ -1,8 +1,8 @@
 import { createElement } from '../render';
 
 import {
-  getDestination,
-  getOfferOptions,
+  getDestinationBydI,
+  getOfferOptionsByType,
   convertDate,
 } from '../utils/utils.js';
 import { Formats } from '../consts/consts.js';
@@ -23,16 +23,16 @@ function createOfferTemplate(option, pointOptions) {
 }
 
 function createEditFormTemplate(point, destinations, offers) {
-  const {type: pointType, dateStart, dateEnd, price, destination: pointDestination, offers: pointOptions} = point;
+  const {type: pointType, dateStart, dateEnd, price, destinationId: pointDestination, pointOptions: pointOptions} = point;
 
   const pointTypeIsChecked = (type) => type === pointType ? 'checked' : '';
 
   const startDate = convertDate(dateStart, Formats.FULL_DATE);
   const endDate = convertDate(dateEnd, Formats.FULL_DATE);
 
-  const offersOptions = getOfferOptions(pointType, offers);
+  const offersOptions = getOfferOptionsByType(pointType, offers);
 
-  const destination = getDestination(pointDestination, destinations);
+  const destination = getDestinationBydI(pointDestination, destinations);
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">

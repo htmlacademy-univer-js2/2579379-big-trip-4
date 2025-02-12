@@ -25,10 +25,15 @@ export class PointsListPresenter {
     render(this.pointsListComponent, this.pointsContainer);
     render(new EditFormView({point: this.points[0], destinations: this.destinations, offers: this.offers}), this.pointsListComponent.getElement());
 
-    for (let i = 0; i < this.points.length; i++) {
-      render(new PointView({point: this.points[i],
-        destinations: this.destinations, offers: this.offers}), this.pointsListComponent.getElement());
-    }
+    // for (let i = 0; i < this.points.length; i++) {
+    //   render(new PointView({point: this.points[i], destinations: this.destinations,
+    //     offers: this.offers}), this.pointsListComponent.getElement());
+    // }
+
+    this.points.forEach((point) => {
+      render(new PointView({point, destinations: this.destinations,
+        offers: this.offers}), this.pointsListComponent.getElement());
+    });
 
     render(new CreationFormView(), this.pointsListComponent.getElement());
   }
