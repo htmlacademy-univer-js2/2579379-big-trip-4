@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 import {
   getDestinationBydI,
@@ -146,26 +146,26 @@ function createEditFormTemplate(point, destinations, offers) {
             </li>`;
 }
 
-export class EditFormView {
-  constructor({point, destinations, offers}) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export class EditFormView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+
+  constructor({point, destinations, offers, onRollButtonClick, onSubmitClick}) {
+    super();
+
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', (event) => {
+      event.preventDefault();
+      onRollButtonClick();
+    });
+    this.element.querySelector('.event__save-btn').addEventListener('submit', onSubmitClick);
   }
 
-  getTemplate() {
-    return createEditFormTemplate(this.point, this.destinations, this.offers);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  deleteElement() {
-    this.element = null;
+  get template() {
+    return createEditFormTemplate(this.#point, this.#destinations, this.#offers);
   }
 }
