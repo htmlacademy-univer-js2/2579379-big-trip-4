@@ -11,15 +11,25 @@ export class PointsListPresenter {
   pointsContainer = document.querySelector('.trip-events');
   filterContainer = document.querySelector('.trip-controls__filters');
 
+  constructor({pointsListModel}) {
+    this.pointsListModel = pointsListModel;
+  }
+
   init() {
+    this.points = this.pointsListModel.getPoints();
+    this.offers = this.pointsListModel.getOffers();
+    this.destinations = this.pointsListModel.getDestinations();
+
     render(new FilterView(), this.filterContainer);
     render(new SortView(), this.pointsContainer);
     render(this.pointsListComponent, this.pointsContainer);
-    render(new EditFormView(), this.pointsListComponent.getElement());
+    render(new EditFormView({point: this.points[0], destinations: this.destinations, offers: this.offers}), this.pointsListComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
-      render(new PointView(), this.pointsListComponent.getElement());
-    }
+    this.points.forEach((point) => {
+      render(new PointView({point, destinations: this.destinations,
+        offers: this.offers}), this.pointsListComponent.getElement());
+    });
+
     render(new CreationFormView(), this.pointsListComponent.getElement());
   }
 }

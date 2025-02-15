@@ -1,4 +1,7 @@
 import { PointsListPresenter } from './points-list-presenter.js';
+import PointsListModel from './model/points-list-model.js';
 
-const listPresenter = new PointsListPresenter();
+const pointsListModel = new PointsListModel();
+
+const listPresenter = new PointsListPresenter({pointsListModel});
 listPresenter.init();
