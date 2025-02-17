@@ -1,4 +1,4 @@
-import { createElement } from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 import {
   getDestinationBydI,
   getOfferOptionsByType,
@@ -68,25 +68,24 @@ function createPointTemplate(point, destinations, offers) {
             </li>`;
 }
 
-export class PointView {
-  constructor({point, destinations, offers}) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+export class PointView extends AbstractView {
+  #point = null;
+  #destinations = null;
+  #offers = null;
+
+  constructor({point, destinations, offers, onRollButtonClick}) {
+    super();
+
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', (event) => {
+      event.preventDefault();
+      onRollButtonClick();
+    });
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.destinations, this.offers);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  deleteElement() {
-    this.element = null;
+  get template() {
+    return createPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 }
