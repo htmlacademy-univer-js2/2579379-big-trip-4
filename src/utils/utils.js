@@ -41,4 +41,8 @@ function getDuration(dateFrom, dateTo) {
   return finalDurtion.join(' ');
 }
 
-export { getDestinationBydI, getOfferOptionsByType, getOptionById, convertDate, getDuration };
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export { getDestinationBydI, getOfferOptionsByType, getOptionById, convertDate, getDuration, updateItem };
