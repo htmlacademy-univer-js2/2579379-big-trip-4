@@ -38,7 +38,6 @@ export class PointPresenter {
     this.#pointItem = new PointView({point: this.#point, destinations: this.#destinations, offers: this.#offers,
       onRollButtonClick:() => {
         this.#replacePointToEditForm();
-        document.addEventListener('keydown', this.#escKeyHandler);
       },
       onFavoriteClick: () => {
         this.#addToFaivorite();
@@ -48,11 +47,9 @@ export class PointPresenter {
     this.#editFormItem = new EditFormView({point: this.#point, destinations: this.#destinations, offers: this.#offers,
       onRollButtonClick: () => {
         this.#replaceEditFormToPoint();
-        document.removeEventListener('keydown', this.#escKeyHandler);
       },
       onSubmitClick: () => {
         this.#replaceEditFormToPoint();
-        document.removeEventListener('keydown', this.#escKeyHandler);
       }
     });
 
@@ -81,12 +78,14 @@ export class PointPresenter {
 
   #replacePointToEditForm() {
     replace(this.#editFormItem, this.#pointItem);
+    document.addEventListener('keydown', this.#escKeyHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
 
   #replaceEditFormToPoint() {
     replace(this.#pointItem, this.#editFormItem);
+    document.removeEventListener('keydown', this.#escKeyHandler);
     this.#mode = Mode.DEFAULT;
   }
 
