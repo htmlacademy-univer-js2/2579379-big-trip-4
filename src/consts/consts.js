@@ -5,4 +5,9 @@ const Formats = {
   FULL_DATE: 'D/MM/YY HH:mm',
 };
 
-export { Formats };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
+export { Formats, Mode };
