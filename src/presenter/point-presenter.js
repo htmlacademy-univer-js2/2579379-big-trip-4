@@ -4,7 +4,7 @@ import { EditFormView } from '../view/edit-form-view.js';
 import { Mode } from '../consts/consts.js';
 
 export class PointPresenter {
-  #destinstions = null;
+  #destinations = null;
   #offers = null;
   #point = null;
   #pointItem = null;
@@ -23,7 +23,7 @@ export class PointPresenter {
   };
 
   constructor({destinations, offers, pointsListComponent, changeDataOnFavorite, changeMode}) {
-    this.#destinstions = destinations;
+    this.#destinations = destinations;
     this.#offers = offers;
     this.#pointsListComponent = pointsListComponent;
     this.#handleDataChange = changeDataOnFavorite;
@@ -35,20 +35,20 @@ export class PointPresenter {
     const prevPointComponent = this.#pointItem;
     const prevEditFormComponent = this.#editFormItem;
 
-    this.#pointItem = new PointView({point: this.#point, destinations: this.#destinstions, offers: this.#offers,
+    this.#pointItem = new PointView({point: this.#point, destinations: this.#destinations, offers: this.#offers,
       onRollButtonClick:() => {
         this.#replacePointToEditForm();
-        document.removeEventListener('keydown', this.#escKeyHandler);
+        document.addEventListener('keydown', this.#escKeyHandler);
       },
       onFavoriteClick: () => {
         this.#addToFaivorite();
       }
     });
 
-    this.#editFormItem = new EditFormView({point, destinations: this.#destinstions, offers: this.#offers,
+    this.#editFormItem = new EditFormView({point: this.#point, destinations: this.#destinations, offers: this.#offers,
       onRollButtonClick: () => {
         this.#replaceEditFormToPoint();
-        document.addEventListener('keydown', this.#escKeyHandler);
+        document.removeEventListener('keydown', this.#escKeyHandler);
       },
       onSubmitClick: () => {
         this.#replaceEditFormToPoint();

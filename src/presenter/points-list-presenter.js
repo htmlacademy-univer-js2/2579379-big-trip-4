@@ -3,7 +3,7 @@ import { SortView } from '../view/sort-view.js';
 import { PointsListView } from '../view/points-list-view.js';
 import { FilterView } from '../view/filter-view.js';
 import { PointPresenter } from './point-presenter.js';
-import { updateItem } from '../utils/utils.js';
+import { updatePointData } from '../utils/utils.js';
 
 export class PointsListPresenter {
   #pointsListComponent = new PointsListView();
@@ -22,7 +22,7 @@ export class PointsListPresenter {
   };
 
   #handlePointUpdate = (updatedPoint) => {
-    this.#points = updateItem(this.#points, updatedPoint);
+    this.#points = updatePointData(this.#points, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
