@@ -10,6 +10,15 @@ import { Formats } from '../consts/consts.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const FLATPICKR_CONFIG = {
+  dateFormat: 'd/m/y H:i',
+  enableTime: true,
+  locale: {
+    firstDayOfWeek: 1,
+  },
+  'time_24hr': true,
+};
+
 function createOfferTemplate(option, pointOptions) {
   const {title, price, id} = option;
   const isOptionChecked = pointOptions.includes(id);
@@ -32,6 +41,7 @@ function createEditFormTemplate(state, destinations, offers) {
   const endDate = convertDate(dateEnd, Formats.FULL_DATE);
   const offersOptions = getOfferOptionsByType(pointType, offers);
   const destination = getDestinationBydI(pointDestination, destinations);
+  const isDestinationValid = destination !== undefined && destination.photos !== undefined && destination.description !== undefined;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -99,7 +109,7 @@ function createEditFormTemplate(state, destinations, offers) {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${pointType}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.destinationName}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${isDestinationValid ? destination.destinationName : ''}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${destinations.map((dest) => `<option value="${dest.id}">${dest.destinationName}</option>`).join('')}
                     </datalist>
@@ -128,23 +138,22 @@ function createEditFormTemplate(state, destinations, offers) {
                   </button>
                 </header>
                 <section class="event__details">
-                ${offersOptions.length !== 0 ? `<section class="event__section  event__section--offers">
+                ${(offersOptions !== undefined && offersOptions.length !== 0) ? `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
                       ${offersOptions.map((option) => createOfferTemplate(option, pointOptions)).join('')}
                     </div>
                   </section>` : ''}
                   
-
-                  <section class="event__section  event__section--destination">
+                  ${isDestinationValid ? `<section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${destination.description}</p>
+                    <p class="event__destination-description">${isDestinationValid ? destination.description : ''}</p>
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
-                        ${destination.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.alt}">`).join('')}
+                        ${isDestinationValid ? destination.photos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.alt}">`).join('') : ''}
                       </div>
                     </div>
-                  </section>
+                  </section>` : ''}
                 </section>
               </form>
             </li>`;
@@ -161,7 +170,7 @@ export class EditFormView extends AbstractStatefulView {
   constructor({point, destinations, offers, onRollButtonClick, onSubmitClick}) {
     super();
 
-    this._setState(EditFormView.parsePointToState({point}));
+    this._setState({point});
     this.#destinations = destinations;
     this.#offers = offers;
     this.#clickHandler = onRollButtonClick;
@@ -256,24 +265,16 @@ export class EditFormView extends AbstractStatefulView {
 
   #setDatepickers = () => {
     const [dateStartElement, dateEndElement] = this.element.querySelectorAll('.event__input--time');
-    const flatpickrConfig = {
-      dateFormat: 'd/m/y H:i',
-      enableTime: true,
-      locale: {
-        firstDayOfWeek: 1,
-      },
-      'time_24hr': true,
-    };
 
     this.#datepickerStart = flatpickr(dateStartElement, {
-      ...flatpickrConfig,
+      ...FLATPICKR_CONFIG,
       defaultDate: this._state.point.dateStart,
       onClose: this.#closeDateStartHandler,
       maxDate: this._state.point.dateEnd,
     });
 
     this.#datepickerEnd = flatpickr(dateEndElement, {
-      ...flatpickrConfig,
+      ...FLATPICKR_CONFIG,
       defaultDate: this._state.point.dateEnd,
       onClose: this.#closeDateEndHandler,
       minDate: this._state.point.dateStart,
@@ -308,7 +309,7 @@ export class EditFormView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollButtonHandler);
-    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event--edit').addEventListener('input', this.#formValidation);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#changePointType);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#changePriceHandler);
@@ -318,7 +319,7 @@ export class EditFormView extends AbstractStatefulView {
     this.#setDatepickers();
   };
 
-  static parsePointToState = ({point}) => ({point});
+  // static parsePointToState = ({point}) => ({point});
 
   static parseStateToPoint = (state) => state.point;
 }
