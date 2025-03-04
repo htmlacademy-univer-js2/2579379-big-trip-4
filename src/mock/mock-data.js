@@ -109,10 +109,12 @@ const testDestinations = [
     id: 'istanbul',
     description: 'Istanbul is a city where the ancient and the modern combine.',
     destinationName: 'Istanbul',
-    photos: {
-      src: 'https://www.pexels.com/photo/starfish-and-shells-on-sand-17190566/',
-      alt: 'Istanbul beach',
-    },
+    photos: [
+      {
+        src: 'https://i.pinimg.com/736x/58/e6/a6/58e6a6d925dc66ae48cff51435d0095e.jpg',
+        alt: 'Istanbul beach',
+      },
+    ]
   },
   {
     id: 'bosphorus',
@@ -120,7 +122,7 @@ const testDestinations = [
     destinationName: 'Bosphorus',
     photos: [
       {
-        src: 'https://www.pexels.com/photo/coastal-view-of-bosphorus-with-boats-in-istanbul-30627335/',
+        src: 'https://i.pinimg.com/736x/30/27/c1/3027c1ffdd3a9b3c7e459565aab5449f.jpg',
         alt: 'Bosphorus'
       }
     ]
@@ -131,8 +133,12 @@ const testDestinations = [
     destinationName: 'Ankara',
     photos: [
       {
-        src: 'https://www.pexels.com/photo/historic-monument-view-through-open-door-in-ankara-30487212/',
+        src: 'https://i.pinimg.com/736x/c3/ec/80/c3ec80b8178e053fc5e8087a3507350f.jpg',
         alt: 'Monument'
+      },
+      {
+        src: 'https://i.pinimg.com/736x/97/87/8c/97878c9aca3d812967be37420f237898.jpg',
+        alt: 'Cat'
       }
     ]
   },
@@ -142,7 +148,7 @@ const testDestinations = [
     destinationName: 'Kalinigrad',
     photos: [
       {
-        src: 'https://www.pexels.com/photo/historic-clock-tower-amidst-lush-greenery-28731323/',
+        src: 'https://i.pinimg.com/736x/29/ac/de/29acde000720dab4690d0d97ef86536f.jpg',
         alt: 'Historic Clock Tower'
       }
     ]
