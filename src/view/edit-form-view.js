@@ -166,9 +166,9 @@ export class EditFormView extends AbstractStatefulView {
   #submitHandler = null;
   #datepickerStart = null;
   #datepickerEnd = null;
-  #prev = null;
+  #deleteHandler = null;
 
-  constructor({point, destinations, offers, onRollButtonClick, onSubmitClick}) {
+  constructor({point, destinations, offers, onRollButtonClick, onSubmitClick, deleteHandler}) {
     super();
 
     this._setState({point});
@@ -176,6 +176,7 @@ export class EditFormView extends AbstractStatefulView {
     this.#offers = offers;
     this.#clickHandler = onRollButtonClick;
     this.#submitHandler = onSubmitClick;
+    this.#deleteHandler = deleteHandler;
 
     this._restoreHandlers();
   }
@@ -316,6 +317,10 @@ export class EditFormView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollButtonHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', (event) => {
+      event.preventDefault();
+      this.#deleteHandler(this._state.point);
+    });
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event--edit').addEventListener('input', this.#formValidation);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#changePointType);

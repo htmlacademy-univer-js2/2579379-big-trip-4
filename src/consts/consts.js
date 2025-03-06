@@ -19,6 +19,21 @@ const Actions = {
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
 };
 
-export { Formats, Mode, Actions, UpdateType };
+const Filters = {
+  EVERYTHING: 'EVERYTHING',
+  FUTURE: 'FUTURE',
+  PRESENT: 'PRESENT',
+  PAST: 'PAST'
+};
+
+const EmptyListMessage = {
+  [Filters.EVERYTHING]: 'Click New Event to create your first point',
+  [Filters.PAST]: 'There are no past events now',
+  [Filters.PRESENT]: 'There are no present events now',
+  [Filters.FUTURE]: 'There are no future events now'
+};
+
+export { Formats, Mode, Actions, UpdateType, Filters, EmptyListMessage };

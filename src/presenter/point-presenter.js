@@ -2,6 +2,7 @@ import { PointView } from '../view/point-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import { EditFormView } from '../view/edit-form-view.js';
 import { Mode, Actions, UpdateType } from '../consts/consts.js';
+import { isSameDay } from '../utils/utils.js';
 export class PointPresenter {
   #destinations = null;
   #offers = null;
@@ -50,10 +51,14 @@ export class PointPresenter {
         this.#replaceEditFormToPoint();
       },
       onSubmitClick: (value) => {
-        //this.#handleDataChange(value);
-        this.#handleDataChange(Actions.UPDATE_POINT, UpdateType.PATCH, value);
+        const isMinor = !isSameDay(value.dateStart, this.#point.dateStart) ||
+        !isSameDay(value.dateEnd, this.#point.dateEnd);
+        this.#handleDataChange(Actions.UPDATE_POINT, isMinor ? UpdateType.MINOR : UpdateType.PATCH, value);
         this.#replaceEditFormToPoint();
-      }
+      },
+      deleteHandler: (value) => {
+        this.#handleDataChange(Actions.DELETE_POINT, UpdateType.MINOR, value);
+      },
     });
 
     if (prevPointComponent === null || prevEditFormComponent === null) {
