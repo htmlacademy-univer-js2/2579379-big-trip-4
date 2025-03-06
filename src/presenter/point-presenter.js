@@ -1,8 +1,7 @@
 import { PointView } from '../view/point-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import { EditFormView } from '../view/edit-form-view.js';
-import { Mode } from '../consts/consts.js';
-
+import { Mode, Actions, UpdateType } from '../consts/consts.js';
 export class PointPresenter {
   #destinations = null;
   #offers = null;
@@ -51,7 +50,8 @@ export class PointPresenter {
         this.#replaceEditFormToPoint();
       },
       onSubmitClick: (value) => {
-        this.#handleDataChange(value);
+        //this.#handleDataChange(value);
+        this.#handleDataChange(Actions.UPDATE_POINT, UpdateType.PATCH, value);
         this.#replaceEditFormToPoint();
       }
     });
@@ -71,6 +71,11 @@ export class PointPresenter {
 
     remove(prevPointComponent);
     remove(prevEditFormComponent);
+  }
+
+  destroy() {
+    remove(this.#pointItem);
+    remove(this.#editFormItem);
   }
 
   resetView() {
@@ -94,6 +99,7 @@ export class PointPresenter {
   }
 
   #addToFaivorite() {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(Actions.UPDATE_POINT, UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   }
 }

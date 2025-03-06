@@ -166,6 +166,7 @@ export class EditFormView extends AbstractStatefulView {
   #submitHandler = null;
   #datepickerStart = null;
   #datepickerEnd = null;
+  #prev = null;
 
   constructor({point, destinations, offers, onRollButtonClick, onSubmitClick}) {
     super();
@@ -187,7 +188,7 @@ export class EditFormView extends AbstractStatefulView {
 
   #formSubmitHandler = (event) => {
     event.preventDefault();
-    this.#submitHandler(EditFormView.parseStateToPoint(this._state));
+    this.#submitHandler(this.#parseStateToPoint());
   };
 
   #changePointType = (event) => {
@@ -210,7 +211,7 @@ export class EditFormView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        price: Number(event.target.value),
+        price: event.target.value,
       }
     });
   };
@@ -295,16 +296,22 @@ export class EditFormView extends AbstractStatefulView {
   };
 
   #formValidation = (event) => {
-    const formNode = event.target.form;
-    const destValue = this.element.querySelector('.event__input--destination').value;
-    const priceValue = this.element.querySelector('.event__input--price').value;
-    const dateFrom = this.element.querySelector('[name="event-start-time"]').value;
-    const dateTo = this.element.querySelector('[name="event-end-time"]').value;
-
+    const formNode = event.target?.form || event.target;
+    if (!formNode) {
+      return;
+    }
+    const destValue = this.element.querySelector('.event__input--destination')?.value || '';
+    const priceValue = this.element.querySelector('.event__input--price')?.value || '';
+    const dateFrom = this.element.querySelector('[name="event-start-time"]')?.value || '';
+    const dateTo = this.element.querySelector('[name="event-end-time"]')?.value || '';
     const isDurationValid = dateFrom && dateTo;
-    const isValid = priceValue && priceValue > 0 && destValue && isDurationValid;
 
-    formNode.querySelector('.event__save-btn').disabled = !isValid;
+    const isValid = priceValue && Number(priceValue) > 0 && destValue && isDurationValid;
+
+    const saveButton = formNode.querySelector('.event__save-btn');
+    if (saveButton) {
+      saveButton.disabled = !isValid;
+    }
   };
 
   _restoreHandlers = () => {
@@ -317,9 +324,14 @@ export class EditFormView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__offer-checkbox').forEach((element) =>
       element.addEventListener('change', this.#offersChangeHandler));
     this.#setDatepickers();
+
+    if (this.element) {
+      const form = this.element.querySelector('.event--edit');
+      if (form) {
+        this.#formValidation({ target: form });
+      }
+    }
   };
 
-  // static parsePointToState = ({point}) => ({point});
-
-  static parseStateToPoint = (state) => state.point;
+  #parseStateToPoint = () => this._state.point;
 }

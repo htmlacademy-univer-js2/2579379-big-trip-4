@@ -3,7 +3,8 @@ import { SortView } from '../view/sort-view.js';
 import { PointsListView } from '../view/points-list-view.js';
 import { FilterView } from '../view/filter-view.js';
 import { PointPresenter } from './point-presenter.js';
-import { updatePointData } from '../utils/utils.js';
+//import { updatePointData } from '../utils/utils.js';
+import { Actions, UpdateType } from '../consts/consts.js';
 
 export class PointsListPresenter {
   #pointsListComponent = new PointsListView();
@@ -21,10 +22,44 @@ export class PointsListPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointUpdate = (updatedPoint) => {
-    this.#points = updatePointData(this.#points, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  //#filterType, #filterModel
+
+  #handlePointUpdate = (action, updateType, update) => {
+    switch (action) {
+      case Actions.UPDATE_POINT:
+        this.#pointsListModel.updatePoint(updateType, update);
+        break;
+      case Actions.DELETE_POINT:
+        this.#pointsListModel.deletePoint(updateType, update);
+        break;
+      case Actions.ADD_POINT:
+        this.#pointsListModel.addPoint(updateType, update);
+        break;
+    }
+    // this.#points = updatePointData(this.#points, updatedPoint);
+    // this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
+
+  #handleModelPoint = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearPointsList();
+        this.#renderList();
+        break;
+    }
+  };
+
+  #clearPointsList() {
+    this.#pointPresenters.forEach((point) => point.destroy());
+    this.#pointPresenters.clear();
+  }
+
+  #renderList() {
+    render(this.#pointsListComponent, this.#pointsContainer);
+  }
 
   constructor({pointsListModel}) {
     this.#pointsListModel = pointsListModel;
@@ -38,6 +73,8 @@ export class PointsListPresenter {
     render(new FilterView(), this.#filterContainer);
     render(new SortView(), this.#pointsContainer);
     render(this.#pointsListComponent, this.#pointsContainer);
+
+    this.#pointsListModel.addObserver(this.#handleModelPoint);
 
     this.#points.forEach((point) => {
       this.#renderPoint(point);
