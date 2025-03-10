@@ -5,6 +5,7 @@ import { PointPresenter } from './point-presenter.js';
 import { Actions, UpdateType, Filters } from '../consts/consts.js';
 import { filter } from '../utils/utils.js';
 import EmptyListView from '../view/empty-list-view.js';
+import NewPointPresenter from './new-point-presenter.js';
 
 export class PointsListPresenter {
   #pointsListComponent = new PointsListView();
@@ -17,10 +18,15 @@ export class PointsListPresenter {
   #filterModel = null;
   #emptiListComponent = null;
 
+  #isCreating = false;
+  #newPointButtonPresenter = null;
+  #newPointPresenter = null;
+
   #pointPresenters = new Map();
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
+    this.#newPointPresenter.destroy();
   };
 
   #handlePointUpdate = (action, updateType, update) => {
@@ -30,6 +36,9 @@ export class PointsListPresenter {
         break;
       case Actions.DELETE_POINT:
         this.#pointsListModel.deletePoint(updateType, update);
+        break;
+      case Actions.ADD_POINT:
+        this.#pointsListModel.addPoint(updateType, update);
         break;
     }
   };
@@ -53,11 +62,19 @@ export class PointsListPresenter {
   #clearPointsList() {
     this.#pointPresenters.forEach((point) => point.destroy());
     this.#pointPresenters.clear();
+    this.#newPointPresenter.destroy();
 
     if (this.#emptiListComponent) {
       remove(this.#emptiListComponent);
     }
   }
+
+  newPointButtonClickHandler = () => {
+    this.#isCreating = true;
+    this.#filterModel.setFilter(UpdateType.MAJOR, Filters.EVERYTHING);
+    this.#newPointButtonPresenter.disableButton();
+    this.#newPointPresenter.init();
+  };
 
   #renderList() {
     render(this.#pointsListComponent, this.#pointsContainer);
@@ -78,15 +95,32 @@ export class PointsListPresenter {
     render(this.#emptiListComponent, this.#pointsListComponent.element, RenderPosition.AFTERBEGIN);
   }
 
-  constructor({pointsListModel, filterModel}) {
+  constructor({pointsListModel, filterModel, newPointButtonPresenter}) {
     this.#pointsListModel = pointsListModel;
     this.#filterModel = filterModel;
     this.#offers = this.#pointsListModel.offers;
     this.#destinations = this.#pointsListModel.destinations;
+    this.#newPointButtonPresenter = newPointButtonPresenter;
 
     this.#pointsListModel.addObserver(this.#handleModelPoint);
     this.#filterModel.addObserver(this.#handleModelPoint);
+
+    this.#newPointPresenter = new NewPointPresenter({
+      container: this.#pointsListComponent.element,
+      pointsModel: this.#pointsListModel,
+      onDataChange: this.#handlePointUpdate,
+      onDestroy: this.#newPointDestroyHandler,
+    });
   }
+
+  #newPointDestroyHandler = ({isCanceled}) => {
+    this.#isCreating = false;
+    this.#newPointButtonPresenter.enableButton();
+    if(this.points.length === 0 && isCanceled) {
+      this.#clearPointsList();
+      this.#renderList();
+    }
+  };
 
   init() {
     render(new SortView(), this.#pointsContainer);

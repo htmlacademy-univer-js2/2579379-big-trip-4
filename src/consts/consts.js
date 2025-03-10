@@ -13,7 +13,7 @@ const Mode = {
 const Actions = {
   UPDATE_POINT: 'UPDATE_POINT',
   DELETE_POINT: 'DELETE_POINT',
-  ADD_TASK: 'ADD_POINT',
+  ADD_POINT: 'ADD_POINT',
 };
 
 const UpdateType = {
@@ -36,4 +36,19 @@ const EmptyListMessage = {
   [Filters.FUTURE]: 'There are no future events now'
 };
 
-export { Formats, Mode, Actions, UpdateType, Filters, EmptyListMessage };
+const EMPTY_POINT = {
+  type: 'taxi',
+  destinationId: null,
+  dateStart: null,
+  dateEnd: null,
+  price: 0,
+  pointOptions: [],
+  isFavorite: false,
+};
+
+const FormType = {
+  CREATE: 'CREATE',
+  EDIT: 'EDIT',
+};
+
+export { Formats, Mode, Actions, UpdateType, Filters, EmptyListMessage, EMPTY_POINT, FormType };

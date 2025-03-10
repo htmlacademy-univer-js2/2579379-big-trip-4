@@ -1,4 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { EMPTY_POINT, FormType } from '../consts/consts.js';
 
 import {
   getDestinationBydI,
@@ -34,13 +35,13 @@ function createOfferTemplate(option, pointOptions) {
           </div>`;
 }
 
-function createEditFormTemplate(state, destinations, offers) {
+function createEditFormTemplate(state, destinations, offers, formType) {
   const {type: pointType, dateStart, dateEnd, price, destinationId: pointDestination, pointOptions: pointOptions} = state.point;
   const pointTypeIsChecked = (type) => type === pointType ? 'checked' : '';
-  const startDate = convertDate(dateStart, Formats.FULL_DATE);
-  const endDate = convertDate(dateEnd, Formats.FULL_DATE);
+  const startDate = dateStart ? convertDate(dateStart, Formats.FULL_DATE) : '';
+  const endDate = dateEnd ? convertDate(dateEnd, Formats.FULL_DATE) : '';
   const offersOptions = getOfferOptionsByType(pointType, offers);
-  const destination = getDestinationBydI(pointDestination, destinations);
+  const destination = getDestinationBydI(pointDestination, destinations) || '';
   const isDestinationValid = destination !== undefined && destination.photos !== undefined && destination.description !== undefined;
 
   return `<li class="trip-events__item">
@@ -132,10 +133,12 @@ function createEditFormTemplate(state, destinations, offers) {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
-                    <span class="visually-hidden">Open event</span>
+                  <button class="event__reset-btn" type="reset">
+                  ${formType === FormType.EDIT ? 'Delete' : 'Cancel'}
                   </button>
+                  ${formType === FormType.EDIT ? `<button class="event__rollup-btn" type="button">
+                    <span class="visually-hidden">Open event</span>
+                  </button>` : ''}
                 </header>
                 <section class="event__details">
                 ${(offersOptions !== undefined && offersOptions.length !== 0) ? `<section class="event__section  event__section--offers">
@@ -162,13 +165,16 @@ export class EditFormView extends AbstractStatefulView {
 
   #destinations = null;
   #offers = null;
+  #resetHandler = null;
   #clickHandler = null;
   #submitHandler = null;
   #datepickerStart = null;
   #datepickerEnd = null;
   #deleteHandler = null;
 
-  constructor({point, destinations, offers, onRollButtonClick, onSubmitClick, deleteHandler}) {
+  #type;
+
+  constructor({point = EMPTY_POINT, destinations, offers, onRollButtonClick, onSubmitClick, onResetClick, deleteHandler, type = FormType.EDIT}) {
     super();
 
     this._setState({point});
@@ -176,13 +182,15 @@ export class EditFormView extends AbstractStatefulView {
     this.#offers = offers;
     this.#clickHandler = onRollButtonClick;
     this.#submitHandler = onSubmitClick;
+    this.#resetHandler = onResetClick; //
     this.#deleteHandler = deleteHandler;
+    this.#type = type;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditFormTemplate(this._state, this.#destinations, this.#offers);
+    return createEditFormTemplate(this._state, this.#destinations, this.#offers, this.#type);
   }
 
   reset = (point) => this.updateElement({point});
@@ -316,11 +324,17 @@ export class EditFormView extends AbstractStatefulView {
   };
 
   _restoreHandlers = () => {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollButtonHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', (event) => {
-      event.preventDefault();
-      this.#deleteHandler(this._state.point);
-    });
+    if (this.#type === FormType.EDIT) {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollButtonHandler);
+      this.element.querySelector('.event__reset-btn').addEventListener('click', (event) => {
+        event.preventDefault();
+        this.#deleteHandler(this._state.point);
+      });
+    }
+
+    if (this.#type === FormType.CREATE) {
+      this.element.querySelector('.event__reset-btn').addEventListener('click', this.#resetHandler);
+    }
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event--edit').addEventListener('input', this.#formValidation);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#changePointType);
