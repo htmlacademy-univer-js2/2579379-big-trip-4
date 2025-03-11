@@ -50,14 +50,14 @@ export class PointPresenter {
         this.#editFormItem.reset(this.#point);
         this.#replaceEditFormToPoint();
       },
-      onSubmitClick: (value) => {
+      onSubmitClick: async (value) => {
         const isMinor = !isSameDay(value.dateStart, this.#point.dateStart) ||
         !isSameDay(value.dateEnd, this.#point.dateEnd);
-        this.#handleDataChange(Actions.UPDATE_POINT, isMinor ? UpdateType.MINOR : UpdateType.PATCH, value);
+        await this.#handleDataChange(Actions.UPDATE_POINT, isMinor ? UpdateType.MINOR : UpdateType.PATCH, value);
         this.#replaceEditFormToPoint();
       },
-      deleteHandler: (value) => {
-        this.#handleDataChange(Actions.DELETE_POINT, UpdateType.MINOR, value);
+      deleteHandler: async (value) => {
+        await this.#handleDataChange(Actions.DELETE_POINT, UpdateType.MINOR, value);
       },
     });
 

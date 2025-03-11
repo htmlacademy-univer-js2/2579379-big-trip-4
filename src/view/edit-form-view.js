@@ -220,7 +220,7 @@ export class EditFormView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        price: event.target.value,
+        price: Number(event.target.value),
       }
     });
   };
@@ -315,7 +315,8 @@ export class EditFormView extends AbstractStatefulView {
     const dateTo = this.element.querySelector('[name="event-end-time"]')?.value || '';
     const isDurationValid = dateFrom && dateTo;
 
-    const isValid = priceValue && Number(priceValue) > 0 && destValue && isDurationValid;
+    const isDestinationValid = this.#destinations.some((dest) => dest.destinationName === destValue);
+    const isValid = priceValue && Number(priceValue) > 0 && isDestinationValid && isDurationValid;
 
     const saveButton = formNode.querySelector('.event__save-btn');
     if (saveButton) {

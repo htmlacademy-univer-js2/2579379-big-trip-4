@@ -12,11 +12,11 @@ function getDestinationBydI(id, destinations) {
 }
 
 function getOfferOptionsByType(type, offers) {
-  return offers.find((offer) => offer.type === type)?.options;
+  return offers.find((offer) => offer.type === type)?.offers;
 }
 
 function getOptionById(id, options) {
-  return options.find((offer) => offer.id === id);
+  return options?.find((offer) => offer.id === id);
 }
 
 function convertDate(date, newFormat) {

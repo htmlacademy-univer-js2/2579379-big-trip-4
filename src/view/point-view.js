@@ -9,8 +9,8 @@ import {
 import { Formats } from '../consts/consts.js';
 
 function createOfferTemplate(optionId, offeTtype, options) {
-  const pointOptions = getOfferOptionsByType(offeTtype, options);
-  const {title, price} = getOptionById(optionId, pointOptions);
+  const pointOptions = getOfferOptionsByType(offeTtype, options) || [];
+  const {title, price} = getOptionById(optionId, pointOptions) || {};
 
   return `<li class="event__offer">
             <span class="event__offer-title">${title}</span>
